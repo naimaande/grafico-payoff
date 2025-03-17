@@ -1,0 +1,15 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.slider {
+  margin: 20px auto;
+  width: 60%;
+  text-align: center;
+}
+
+canvas {
+  margin: 20px auto;
+  display: block;
+  max-width: 80%;
+}
