@@ -1,15 +1,12 @@
-body {
-  font-family: Arial, sans-serif;
-}
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
 
-.slider {
-  margin: 20px auto;
-  width: 60%;
-  text-align: center;
-}
-
-canvas {
-  margin: 20px auto;
-  display: block;
-  max-width: 80%;
-}
+  canvas {
+    width: 100vw !important; /* Larghezza a tutto schermo */
+    height: 100vh !important; /* Altezza a tutto schermo */
+  }
+</style>
