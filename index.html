@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grafico Payoff - Call Option</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2 style="text-align: center;">Grafico Payoff - Call Option</h2>
+
+  <div class="slider">
+    <label>Strike Price: <span id="strikeLabel">100</span> €</label>
+    <input type="range" id="strikePrice" min="50" max="150" value="100" step="1">
+    <br><br>
+    <label>Premium: <span id="premiumLabel">10</span> €</label>
+    <input type="range" id="premium" min="0" max="50" value="10" step="1">
+  </div>
+
+  <canvas id="payoffChart"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.2.0"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('payoffChart').getContext('2d');
+      const strikePriceInput = document.getElementById('strikePrice');
+      const strikeLabel = document.getElementById('strikeLabel');
+      const premiumInput = document.getElementById('premium');
+      const premiumLabel = document.getElementById('premiumLabel');
+
+      function generatePayoffData(strikePrice, premium) {
+        const data = [];
+        for (let price = 50; price <= 150; price++) {
+          const payoff = Math.max(price - strikePrice, 0) - premium;
+          data.push({ x: price, y: payoff });
+        }
+        return data;
+      }
+
+      function updateChart() {
+        const strikePrice = parseInt(strikePriceInput.value);
+        const premium = parseInt(premiumInput.value);
+        strikeLabel.textContent = strikePrice;
+        premiumLabel.textContent = premium;
+        const data = generatePayoffData(strikePrice, premium);
+        const breakeven = strikePrice + premium;
+
+        chart.data.datasets[0].data = data;
+        chart.options.plugins.annotation.annotations.profitZone.xMin = breakeven;
+        chart.options.plugins.annotation.annotations.lossZone.xMax = breakeven;
+        chart.update();
+      }
+
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            label: 'Payoff',
+            borderColor: 'blue',
+            borderWidth: 2,
+            fill: false,
+            data: generatePayoffData(100, 10)
+          }]
+        },
+        options: {
+          scales: {
+            x: { type: 'linear', position: 'bottom' },
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            annotation: {
+              annotations: {
+                profitZone: {
+                  type: 'box',
+                  xMin: 110,
+                  xMax: 150,
+                  backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                  drawTime: 'beforeDatasetsDraw'
+                },
+                lossZone: {
+                  type: 'box',
+                  xMin: 50,
+                  xMax: 110,
+                  backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                  drawTime: 'beforeDatasetsDraw'
+                },
+                zeroLine: {
+                  type: 'line',
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                  value: 0,
+                  scaleID: 'y',
+                  borderDash: [5, 5]
+                }
+              }
+            }
+          }
+        }
+      });
+
+      strikePriceInput.addEventListener('input', updateChart);
+      premiumInput.addEventListener('input', updateChart);
+    });
+  </script>
+</body>
+</html>
